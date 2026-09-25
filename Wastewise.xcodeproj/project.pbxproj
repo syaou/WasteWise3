@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA60698E3065FD9B00F879DD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA60698D3065FD9B00F879DD /* WidgetKit.framework */; };
+		AA6069903065FD9B00F879DD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA60698F3065FD9B00F879DD /* SwiftUI.framework */; };
 		CC0000000000000000000001 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000002 /* Lottie */; };
+		DD0000000000000000000001 /* ReminderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = AA60698B3065FD9B00F879DD /* ReminderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -18,12 +21,46 @@
 			remoteGlobalIDString = AA6064CE304E1E3600F879DD;
 			remoteInfo = Wastewise;
 		};
+		DD0000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA6064C7304E1E3600F879DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA60698A3065FD9B00F879DD;
+			remoteInfo = ReminderExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DD0000000000000000000003 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DD0000000000000000000001 /* ReminderExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AA6064CF304E1E3600F879DD /* Wastewise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wastewise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA60698B3065FD9B00F879DD /* ReminderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReminderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA60698D3065FD9B00F879DD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		AA60698F3065FD9B00F879DD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		BB0000000000000000000001 /* WasteWiseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = WasteWiseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AA60699D3065FD9C00F879DD /* Exceptions for "Reminder" folder in "ReminderExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA60698A3065FD9B00F879DD /* ReminderExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AA6064D1304E1E3600F879DD /* Wastewise */ = {
@@ -31,9 +68,22 @@
 			path = Wastewise;
 			sourceTree = "<group>";
 		};
+		AA6069913065FD9B00F879DD /* Reminder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA60699D3065FD9C00F879DD /* Exceptions for "Reminder" folder in "ReminderExtension" target */,
+			);
+			path = Reminder;
+			sourceTree = "<group>";
+		};
 		BB0000000000000000000002 /* WasteWiseTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WasteWiseTests;
+			sourceTree = "<group>";
+		};
+		DD0000000000000000000005 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -44,6 +94,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC0000000000000000000001 /* Lottie in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA6069883065FD9B00F879DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA6069903065FD9B00F879DD /* SwiftUI.framework in Frameworks */,
+				AA60698E3065FD9B00F879DD /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,7 +120,10 @@
 			isa = PBXGroup;
 			children = (
 				AA6064D1304E1E3600F879DD /* Wastewise */,
+				DD0000000000000000000005 /* Shared */,
 				BB0000000000000000000002 /* WasteWiseTests */,
+				AA6069913065FD9B00F879DD /* Reminder */,
+				AA60698C3065FD9B00F879DD /* Frameworks */,
 				AA6064D0304E1E3600F879DD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,8 +133,18 @@
 			children = (
 				AA6064CF304E1E3600F879DD /* Wastewise.app */,
 				BB0000000000000000000001 /* WasteWiseTests.xctest */,
+				AA60698B3065FD9B00F879DD /* ReminderExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AA60698C3065FD9B00F879DD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA60698D3065FD9B00F879DD /* WidgetKit.framework */,
+				AA60698F3065FD9B00F879DD /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,13 +157,16 @@
 				AA6064CB304E1E3600F879DD /* Sources */,
 				AA6064CC304E1E3600F879DD /* Frameworks */,
 				AA6064CD304E1E3600F879DD /* Resources */,
+				DD0000000000000000000003 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DD0000000000000000000004 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				AA6064D1304E1E3600F879DD /* Wastewise */,
+				DD0000000000000000000005 /* Shared */,
 			);
 			name = Wastewise;
 			packageProductDependencies = (
@@ -100,6 +175,29 @@
 			productName = Wastewise;
 			productReference = AA6064CF304E1E3600F879DD /* Wastewise.app */;
 			productType = "com.apple.product-type.application";
+		};
+		AA60698A3065FD9B00F879DD /* ReminderExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA60699E3065FD9C00F879DD /* Build configuration list for PBXNativeTarget "ReminderExtension" */;
+			buildPhases = (
+				AA6069873065FD9B00F879DD /* Sources */,
+				AA6069883065FD9B00F879DD /* Frameworks */,
+				AA6069893065FD9B00F879DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA6069913065FD9B00F879DD /* Reminder */,
+				DD0000000000000000000005 /* Shared */,
+			);
+			name = ReminderExtension;
+			packageProductDependencies = (
+			);
+			productName = ReminderExtension;
+			productReference = AA60698B3065FD9B00F879DD /* ReminderExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		BB0000000000000000000003 /* WasteWiseTests */ = {
 			isa = PBXNativeTarget;
@@ -135,6 +233,9 @@
 					AA6064CE304E1E3600F879DD = {
 						CreatedOnToolsVersion = 26.6;
 					};
+					AA60698A3065FD9B00F879DD = {
+						CreatedOnToolsVersion = 26.6;
+					};
 				};
 			};
 			buildConfigurationList = AA6064CA304E1E3600F879DD /* Build configuration list for PBXProject "Wastewise" */;
@@ -156,12 +257,20 @@
 			targets = (
 				BB0000000000000000000003 /* WasteWiseTests */,
 				AA6064CE304E1E3600F879DD /* Wastewise */,
+				AA60698A3065FD9B00F879DD /* ReminderExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		AA6064CD304E1E3600F879DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA6069893065FD9B00F879DD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -185,6 +294,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA6069873065FD9B00F879DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BB0000000000000000000004 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -199,6 +315,11 @@
 			isa = PBXTargetDependency;
 			target = AA6064CE304E1E3600F879DD /* Wastewise */;
 			targetProxy = BB000000000000000000000B /* PBXContainerItemProxy */;
+		};
+		DD0000000000000000000004 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA60698A3065FD9B00F879DD /* ReminderExtension */;
+			targetProxy = DD0000000000000000000002 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -329,6 +450,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Wastewise/Wastewise.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JQT538DXF;
@@ -361,6 +483,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Wastewise/Wastewise.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JQT538DXF;
@@ -385,6 +508,74 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA60699B3065FD9C00F879DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = Reminder/Reminder.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2JQT538DXF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Reminder/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Reminder;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.WasteWise.sana.Wastewise.Reminder;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA60699C3065FD9C00F879DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = Reminder/Reminder.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2JQT538DXF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Reminder/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Reminder;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.WasteWise.sana.Wastewise.Reminder;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -435,6 +626,15 @@
 			buildConfigurations = (
 				AA6064DB304E1E3800F879DD /* Debug */,
 				AA6064DC304E1E3800F879DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA60699E3065FD9C00F879DD /* Build configuration list for PBXNativeTarget "ReminderExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA60699B3065FD9C00F879DD /* Debug */,
+				AA60699C3065FD9C00F879DD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

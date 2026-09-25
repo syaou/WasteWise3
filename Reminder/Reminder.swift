@@ -1,94 +1,147 @@
-//
-//  Reminder.swift
-//  Reminder
-//
-//  Created by Sana Yousefi on 25/9/2026.
-//
-
 import WidgetKit
 import SwiftUI
+import UIKit
 
-struct Provider: AppIntentTimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+struct Provider: TimelineProvider {
+    func placeholder(in context: Context) -> CollectionEntry {
+        CollectionEntry(date: .now, daysRemaining: 3)
     }
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
+    func getSnapshot(in context: Context, completion: @escaping (CollectionEntry) -> Void) {
+        let now = Date()
+        completion(CollectionEntry(date: now, daysRemaining: context.isPreview
+            ? 3 : CollectionWidgetStore.load()?.daysUntilCollection(at: now)))
     }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
 
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
+    func getTimeline(in context: Context, completion: @escaping (Timeline<CollectionEntry>) -> Void) {
+        let schedule = CollectionWidgetStore.load()
+        let entries = CollectionWidgetSchedule.timelineDates(from: .now).map { date in
+            CollectionEntry(date: date, daysRemaining: schedule?.daysUntilCollection(at: date))
         }
-
-        return Timeline(entries: entries, policy: .atEnd)
+        completion(Timeline(entries: entries, policy: .atEnd))
     }
-
-//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
 }
 
-struct SimpleEntry: TimelineEntry {
+struct CollectionEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationAppIntent
+    let daysRemaining: Int?
+
+    var title: String {
+        switch daysRemaining {
+        case 0: return "Collection today!"
+        case 1: return "Collection tomorrow"
+        case let days?: return "Collection in \(days) days"
+        case nil: return "Find your bin day"
+        }
+    }
 }
 
-struct ReminderEntryView : View {
-    var entry: Provider.Entry
-    @Environment(\.levelOfDetail) var levelOfDetail: LevelOfDetail
+/// Presents the supplied artwork intact, clipping only its empty top and bottom margins.
+private struct CollectionArtwork: View {
+    let day: Int
+
+    // WidgetKit checks the archived bitmap dimensions, not just the SwiftUI frame.
+    // Keep the original assets while bounding the rendered bitmap for both families.
+    private static let thumbnails = (0...6).map { day in
+        UIImage(named: "CollectionDay\(day)")?.preparingThumbnail(of: CGSize(width: 600, height: 688))
+    }
 
     var body: some View {
-        switch levelOfDetail {
-        case .simplified:
-            VStack {
-                Text(entry.date, style: .time)
+        GeometryReader { geometry in
+            Image(uiImage: Self.thumbnails[day] ?? UIImage())
+                .resizable()
+                .scaledToFit()
+                .frame(width: geometry.size.width, height: geometry.size.width * 1342 / 1172)
+                .offset(y: -geometry.size.width * 340 / 1172)
+        }
+        .aspectRatio(1172 / 780, contentMode: .fit)
+        .clipped()
+        .accessibilityHidden(true)
+    }
+}
 
-                Text(entry.configuration.favoriteEmoji)
-            }
-        default:
-            VStack {
-                Text("Time:")
-                Text(entry.date, style: .time)
+struct ReminderEntryView: View {
+    let entry: CollectionEntry
+    @Environment(\.widgetFamily) private var family
+    private let ink = Color(red: 0.25, green: 0.29, blue: 0.17)
 
-                Text("Favorite Emoji:")
-                Text(entry.configuration.favoriteEmoji)
+    var body: some View {
+        Group {
+            if let days = entry.daysRemaining, (0...6).contains(days) {
+                if family == .systemMedium {
+                    HStack(spacing: 12) {
+                        CollectionArtwork(day: days)
+                            .frame(maxWidth: .infinity)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("BIN DAY").font(.caption2.weight(.bold)).tracking(1.5)
+                            Text(entry.title).font(.headline)
+                            Text(days == 0 ? "Time to put your bins out." : "Your collection countdown")
+                                .font(.caption)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                } else {
+                    VStack(spacing: 8) {
+                        CollectionArtwork(day: days)
+                        Text(entry.title)
+                            .font(.caption.weight(.semibold))
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
+                    }
+                }
+            } else {
+                VStack(spacing: 10) {
+                    Image(systemName: "calendar")
+                        .font(.largeTitle)
+                    Text(entry.title).font(.headline)
+                    Text(entry.daysRemaining == nil
+                         ? "Open Wastewise to check your address and collection schedule."
+                         : "Your next collection is on its way.")
+                        .font(.caption)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
+        .foregroundStyle(ink)
+        .padding(12)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(entry.daysRemaining == nil
+            ? "Open Wastewise to find your collection day."
+            : entry.title)
     }
 }
 
 struct Reminder: Widget {
-    let kind: String = "Reminder"
+    let kind = "Reminder"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
             ReminderEntryView(entry: entry)
-                .containerBackground(.white.gradient, for: .widget)
+                .containerBackground(Color(red: 1, green: 0.98, blue: 0.90), for: .widget)
         }
-        .supportedFamilies([.systemSmall])
-        .supportedMountingStyles([.elevated])
-        .widgetTexture(.paper)
+        .configurationDisplayName("Collection countdown")
+        .description("Watch your bin fill as collection day gets closer.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+        .contentMarginsDisabled()
     }
 }
 
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
-    }
+#Preview(as: .systemSmall) {
+    Reminder()
+} timeline: {
+    CollectionEntry(date: .now, daysRemaining: 6)
+    CollectionEntry(date: .now, daysRemaining: 5)
+    CollectionEntry(date: .now, daysRemaining: 4)
+    CollectionEntry(date: .now, daysRemaining: 3)
+    CollectionEntry(date: .now, daysRemaining: 2)
+    CollectionEntry(date: .now, daysRemaining: 1)
+    CollectionEntry(date: .now, daysRemaining: 0)
+    CollectionEntry(date: .now, daysRemaining: nil)
+}
+
+#Preview(as: .systemMedium) {
+    Reminder()
+} timeline: {
+    CollectionEntry(date: .now, daysRemaining: 3)
+    CollectionEntry(date: .now, daysRemaining: 0)
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
     @State private var selectedTab = 0
@@ -16,9 +17,18 @@ struct ContentView: View {
             CleanupBookingView()
                 .tabItem { Label("Clean Up", systemImage: "truck.box") }.tag(3)
         }
+        .onReceive(collectionViewModel.$result) { schedule in
+            guard let schedule else { return }
+            CollectionWidgetStore.save(CollectionWidgetSchedule(dates: schedule.collections.map(\.date)))
+            WidgetCenter.shared.reloadTimelines(ofKind: "Reminder")
+        }
         .environmentObject(addressStore)
         .environmentObject(collectionViewModel)
-        .onChange(of: addressStore.addressRevision, initial: true) { _, _ in
+        .onChange(of: addressStore.addressRevision, initial: true) { oldRevision, newRevision in
+            if oldRevision != newRevision || !addressStore.hasSavedAddress {
+                CollectionWidgetStore.save(nil)
+                WidgetCenter.shared.reloadTimelines(ofKind: "Reminder")
+            }
             if addressStore.hasSavedAddress {
                 collectionViewModel.findCollectionDates(address: addressStore.address)
             } else {
