@@ -11,6 +11,7 @@
 		AA6069903065FD9B00F879DD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA60698F3065FD9B00F879DD /* SwiftUI.framework */; };
 		CC0000000000000000000001 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000002 /* Lottie */; };
 		DD0000000000000000000001 /* ReminderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = AA60698B3065FD9B00F879DD /* ReminderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EE0000000000000000000002 /* CollectionNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000001 /* CollectionNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +29,13 @@
 			remoteGlobalIDString = AA60698A3065FD9B00F879DD;
 			remoteInfo = ReminderExtension;
 		};
+		EE0000000000000000000004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA6064C7304E1E3600F879DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE0000000000000000000003;
+			remoteInfo = CollectionNotificationContent;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +46,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				DD0000000000000000000001 /* ReminderExtension.appex in Embed App Extensions */,
+				EE0000000000000000000002 /* CollectionNotificationContent.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -50,6 +59,7 @@
 		AA60698D3065FD9B00F879DD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		AA60698F3065FD9B00F879DD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		BB0000000000000000000001 /* WasteWiseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = WasteWiseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE0000000000000000000001 /* CollectionNotificationContent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CollectionNotificationContent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -59,6 +69,13 @@
 				Info.plist,
 			);
 			target = AA60698A3065FD9B00F879DD /* ReminderExtension */;
+		};
+		EE000000000000000000000A /* Exceptions for "CollectionNotificationContent" folder in "CollectionNotificationContent" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EE0000000000000000000003 /* CollectionNotificationContent */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -84,6 +101,14 @@
 		DD0000000000000000000005 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		EE0000000000000000000009 /* CollectionNotificationContent */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EE000000000000000000000A /* Exceptions for "CollectionNotificationContent" folder in "CollectionNotificationContent" target */,
+			);
+			path = CollectionNotificationContent;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -113,6 +138,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EE0000000000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -123,6 +155,7 @@
 				DD0000000000000000000005 /* Shared */,
 				BB0000000000000000000002 /* WasteWiseTests */,
 				AA6069913065FD9B00F879DD /* Reminder */,
+				EE0000000000000000000009 /* CollectionNotificationContent */,
 				AA60698C3065FD9B00F879DD /* Frameworks */,
 				AA6064D0304E1E3600F879DD /* Products */,
 			);
@@ -134,6 +167,7 @@
 				AA6064CF304E1E3600F879DD /* Wastewise.app */,
 				BB0000000000000000000001 /* WasteWiseTests.xctest */,
 				AA60698B3065FD9B00F879DD /* ReminderExtension.appex */,
+				EE0000000000000000000001 /* CollectionNotificationContent.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -163,6 +197,7 @@
 			);
 			dependencies = (
 				DD0000000000000000000004 /* PBXTargetDependency */,
+				EE0000000000000000000005 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				AA6064D1304E1E3600F879DD /* Wastewise */,
@@ -220,6 +255,27 @@
 			productReference = BB0000000000000000000001 /* WasteWiseTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		EE0000000000000000000003 /* CollectionNotificationContent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE000000000000000000000D /* Build configuration list for PBXNativeTarget "CollectionNotificationContent" */;
+			buildPhases = (
+				EE0000000000000000000006 /* Sources */,
+				EE0000000000000000000007 /* Frameworks */,
+				EE0000000000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DD0000000000000000000005 /* Shared */,
+				EE0000000000000000000009 /* CollectionNotificationContent */,
+			);
+			name = CollectionNotificationContent;
+			productName = CollectionNotificationContent;
+			productReference = EE0000000000000000000001 /* CollectionNotificationContent.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -258,6 +314,7 @@
 				BB0000000000000000000003 /* WasteWiseTests */,
 				AA6064CE304E1E3600F879DD /* Wastewise */,
 				AA60698A3065FD9B00F879DD /* ReminderExtension */,
+				EE0000000000000000000003 /* CollectionNotificationContent */,
 			);
 		};
 /* End PBXProject section */
@@ -278,6 +335,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BB0000000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE0000000000000000000008 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -308,6 +372,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EE0000000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -320,6 +391,11 @@
 			isa = PBXTargetDependency;
 			target = AA60698A3065FD9B00F879DD /* ReminderExtension */;
 			targetProxy = DD0000000000000000000002 /* PBXContainerItemProxy */;
+		};
+		EE0000000000000000000005 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE0000000000000000000003 /* CollectionNotificationContent */;
+			targetProxy = EE0000000000000000000004 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -609,6 +685,60 @@
 			};
 			name = Release;
 		};
+		EE000000000000000000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2JQT538DXF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CollectionNotificationContent/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "WasteWise Collection Reminder";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.WasteWise.sana.Wastewise.CollectionNotificationContent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EE000000000000000000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2JQT538DXF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CollectionNotificationContent/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "WasteWise Collection Reminder";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.WasteWise.sana.Wastewise.CollectionNotificationContent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -644,6 +774,15 @@
 			buildConfigurations = (
 				BB0000000000000000000008 /* Debug */,
 				BB0000000000000000000009 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EE000000000000000000000D /* Build configuration list for PBXNativeTarget "CollectionNotificationContent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE000000000000000000000B /* Debug */,
+				EE000000000000000000000C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
