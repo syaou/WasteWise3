@@ -1,23 +1,35 @@
 import Foundation
+import CoreData
 
-/// Combines local sample household disposal guidance and simulated clean up receipts.
+/// Combines a persistent Core Data disposal catalogue and simulated clean up receipts.
 /// Despite its name, collection lookup delegates to the live City of Parramatta ArcGIS layer.
 /// Item matching ignores case and surrounding whitespace; clean up submission always returns
 /// `WW-DEMO-001` without contacting council. Use Cases perform request validation.
 struct LocalWasteWiseRepository: WasteWiseRepository {
-    private let items = [
-        WasteItem(id: "cardboard", name: "Cardboard box", disposalStream: .recycling,
-                  instruction: "Flatten empty cardboard boxes for recycling."),
-        WasteItem(id: "plastic-bag", name: "Plastic bag", disposalStream: .generalWaste,
-                  instruction: "Put plastic bags in general waste, not recycling."),
-        WasteItem(id: "grass", name: "Grass", disposalStream: .greenWaste,
-                  instruction: "Put loose grass clippings in green waste."),
-        WasteItem(id: "battery", name: "Battery", disposalStream: .specialistDropOff,
-                  instruction: "Keep batteries out of household bins. Use a battery drop-off point.")
-    ]
+    private let catalogue: () throws -> DisposalCatalogueStore
+
+    init() { catalogue = { try DisposalCatalogueStore.shared.get() } }
+    init(catalogue: DisposalCatalogueStore) { self.catalogue = { catalogue } }
 
     func findWasteItem(named name: String) throws -> WasteItem? {
-        items.first { $0.name.caseInsensitiveCompare(name.trimmingCharacters(in: .whitespacesAndNewlines)) == .orderedSame }
+        let context = try catalogue().container.newBackgroundContext()
+        return try context.performAndWait {
+            let request = NSFetchRequest<NSManagedObject>(entityName: "WasteItemRecord")
+            request.predicate = NSPredicate(format: "name ==[c] %@", name.trimmingCharacters(in: .whitespacesAndNewlines))
+            request.fetchLimit = 1
+            request.relationshipKeyPathsForPrefetching = ["category"]
+            guard let record = try context.fetch(request).first else { return nil }
+            guard let id = record.value(forKey: "identifier") as? String,
+                  let name = record.value(forKey: "name") as? String,
+                  let instruction = record.value(forKey: "instruction") as? String,
+                  let category = record.value(forKey: "category") as? NSManagedObject,
+                  let categoryName = category.value(forKey: "name") as? String,
+                  let stream = DisposalStream(rawValue: categoryName) else {
+                throw DisposalCatalogueStore.CatalogueError.invalidItem
+            }
+            return WasteItem(id: id, name: name, disposalStream: stream, instruction: instruction,
+                             sourceURL: record.value(forKey: "sourceURL") as? String)
+        }
     }
 
     func collectionSchedule(for address: ResidentialAddress) async throws -> CollectionSchedule? {

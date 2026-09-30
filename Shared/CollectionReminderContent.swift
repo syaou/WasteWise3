@@ -7,7 +7,7 @@ nonisolated struct CollectionReminderContent: Codable, Equatable {
     static let weeklyIdentifier = "wastewise.collection.weekly"
     static let sampleIdentifier = "wastewise.collection.sample"
     static let requestIdentifiers = [weeklyIdentifier, sampleIdentifier]
-    static let caveat = "This is your usual collection day,"
+    static let caveat = "This is your collection day,"
     static let weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
     let weekday: Int

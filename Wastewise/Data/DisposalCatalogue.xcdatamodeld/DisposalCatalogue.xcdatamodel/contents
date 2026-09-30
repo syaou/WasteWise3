@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="25A354" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="DisposalCategory" representedClassName="NSManagedObject" syncable="YES">
+        <attribute name="name" attributeType="String"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WasteItemRecord" inverseName="category" inverseEntity="WasteItemRecord"/>
+    </entity>
+    <entity name="WasteItemRecord" representedClassName="NSManagedObject" syncable="YES">
+        <attribute name="identifier" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="instruction" attributeType="String"/>
+        <attribute name="sourceURL" attributeType="String"/>
+        <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="DisposalCategory" inverseName="items" inverseEntity="DisposalCategory"/>
+        <uniquenessConstraints><uniquenessConstraint><constraint value="identifier"/></uniquenessConstraint></uniquenessConstraints>
+    </entity>
+</model>

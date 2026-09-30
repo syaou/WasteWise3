@@ -19,7 +19,7 @@ enum ClassifyWasteItemError: LocalizedError, Equatable {
     }
 }
 
-/// Checks an item name against the local sample catalogue and returns household bin guidance.
+/// Checks an item name against the disposal catalogue and returns disposal-route guidance.
 /// Rejects blank or unknown names and prevents specialist waste from being recommended for a bin.
 struct ClassifyWasteItemUseCase {
     let repository: any WasteWiseRepository
@@ -34,6 +34,6 @@ struct ClassifyWasteItemUseCase {
         guard item.disposalStream != .specialistDropOff else {
             throw ClassifyWasteItemError.specialistDisposalRequired
         }
-        return DisposalGuidance(itemName: item.name, disposalStream: item.disposalStream, instruction: item.instruction)
+        return DisposalGuidance(itemName: item.name, disposalStream: item.disposalStream, instruction: item.instruction, sourceURL: item.sourceURL)
     }
 }

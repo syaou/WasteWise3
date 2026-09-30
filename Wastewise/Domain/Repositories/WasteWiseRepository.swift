@@ -2,7 +2,7 @@ import Foundation
 
 /// Supplies household disposal information, collection schedules and simulated clean up receipts.
 /// Use Cases enforce resident input and disposal rules before using these operations.
-/// The current implementation combines local sample disposal data and simulated bookings
+/// The current implementation combines a Core Data disposal catalogue and simulated bookings
 /// with live City of Parramatta collection zone information from ArcGIS.
 protocol WasteWiseRepository {
     /// Finds a catalogue item by name, returning nil when it is unknown.

@@ -196,7 +196,7 @@ final class CollectionReminderController: ObservableObject {
                         if sendSample {
                             let sample = Self.notificationContent(information)
                             sample.title = "Sample · Usual collection day"
-                            sample.body = "Your usual collection day is \(information.weekdayName)."
+                            sample.body = "Your collection day is \(information.weekdayName)."
                             sample.userInfo["wastewise.sample"] = true
                             try await client.add(UNNotificationRequest(identifier: CollectionReminderContent.sampleIdentifier, content: sample,
                                                                        trigger: UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)))
@@ -223,7 +223,7 @@ final class CollectionReminderController: ObservableObject {
         let content = UNMutableNotificationContent()
         content.title = "Time to put the bins out"
         let timing = daysBefore == 0 ? "today" : daysBefore == 1 ? "tomorrow" : "in \(daysBefore) days"
-        content.body = "Your usual collection day is \(timing) (\(information.weekdayName))."
+        content.body = "Your collection day is \(timing) (\(information.weekdayName))."
         content.categoryIdentifier = CollectionReminderContent.category
         content.threadIdentifier = "wastewise.collection"
         content.sound = .default

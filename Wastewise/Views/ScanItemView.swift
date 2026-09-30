@@ -86,7 +86,7 @@ struct ScanItemView: View {
                         Text("Try these items")
                             .font(.headline)
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 125), spacing: 12)], spacing: 12) {
-                            ForEach(["Cardboard box", "Plastic bag", "Grass", "Battery"], id: \.self) { item in
+                            ForEach(["Cardboard box", "Baking paper", "Grass", "Vegetable scraps", "Battery", "Toaster", "Automotive chemicals", "Barbecue"], id: \.self) { item in
                                 Text(item)
                                     .font(.subheadline.weight(.medium))
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -115,6 +115,9 @@ struct ScanItemView: View {
                             }
                             Text(result.instruction)
                                 .fixedSize(horizontal: false, vertical: true)
+                            if let source = result.sourceURL, let url = URL(string: source) {
+                                Link("Council disposal guidance", destination: url)
+                            }
                         }
                         .padding(24)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -159,7 +162,7 @@ struct ScanItemView: View {
             return ("arrow.3.trianglepath", .yellow, Color.yellow.opacity(colorScheme == .dark ? 0.18 : 0.20))
         case .greenWaste:
             return ("leaf.fill", green, greenSurface)
-        case .specialistDropOff:
+        case .specialistDropOff, .communityRecyclingCentre, .problemWaste, .bulkyWaste:
             return ("exclamationmark.triangle.fill", blue, blueSurface)
         }
     }

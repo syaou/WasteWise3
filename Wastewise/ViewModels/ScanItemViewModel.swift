@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-/// Presents local sample household disposal guidance and recovery messages from the classification Use Case.
+/// Presents saved disposal guidance and recovery messages from the classification Use Case.
 /// Specialist disposal decisions remain in the Use Case, not in the screen.
 @MainActor
 final class ScanItemViewModel: ObservableObject {
