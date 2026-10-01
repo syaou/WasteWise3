@@ -112,7 +112,6 @@ struct HomeView: View {
                     }
                     .padding(24)
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
-                    CollectionReminderSettingsView()
                 }
                 .padding(20)
                 .frame(maxWidth: 600)

@@ -68,6 +68,9 @@ struct CollectionCalendarView: View {
                             .frame(maxWidth: .infinity)
                     }
 
+                    CollectionReminderSettingsView()
+                        .tint(green)
+
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Button { displayedMonth -= 1 } label: {
