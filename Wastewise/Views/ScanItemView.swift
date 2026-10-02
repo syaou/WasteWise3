@@ -49,96 +49,65 @@ struct ScanItemView: View {
                     }
                     .padding(.vertical, 4)
 
-                    VStack(alignment: .leading, spacing: 18) {
-                        Label("Check an item", systemImage: "magnifyingglass")
-                            .font(.headline)
-                            .foregroundStyle(blue)
-                        HStack(spacing: 12) {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundStyle(blue)
-                                .accessibilityHidden(true)
-                            TextField("Item name", text: $viewModel.itemName)
-                                .focused($isEnteringItem)
-                                .submitLabel(.search)
-                                .onSubmit { checkItem() }
-                        }
-                        .padding(16)
-                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
-
-                        Button(action: checkItem) {
-                            HStack {
-                                Text("Check disposal guidance")
-                                Spacer(minLength: 12)
-                                Image(systemName: "arrow.right")
-                                    .accessibilityHidden(true)
+                    HStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(green)
+                            .accessibilityHidden(true)
+                        TextField("Search the glossary", text: $viewModel.itemName)
+                            .focused($isEnteringItem)
+                            .submitLabel(.search)
+                            .onSubmit { isEnteringItem = false }
+                            .autocorrectionDisabled()
+                        if !viewModel.itemName.isEmpty {
+                            Button {
+                                viewModel.itemName = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
                             }
-                            .font(.headline)
-                            .padding(20)
-                            .foregroundStyle(colorScheme == .dark ? Color(red: 0.08, green: 0.16, blue: 0.11) : .white)
-                            .background(green, in: RoundedRectangle(cornerRadius: 16))
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(24)
-                    .background(blueSurface, in: RoundedRectangle(cornerRadius: 24))
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Try these items")
-                            .font(.headline)
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 125), spacing: 12)], spacing: 12) {
-                            ForEach(["Cardboard box", "Baking paper", "Grass", "Vegetable scraps", "Battery", "Toaster", "Automotive chemicals", "Barbecue"], id: \.self) { item in
-                                Text(item)
-                                    .font(.subheadline.weight(.medium))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(14)
-                                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
-                            }
+                            .accessibilityLabel("Clear search")
+                            .frame(minWidth: 44, minHeight: 44)
                         }
                     }
+                    .padding(16)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
 
-                    if let result = viewModel.result {
-                        let style = disposalStyle(for: result.disposalStream)
-                        VStack(alignment: .leading, spacing: 16) {
-                            Image(systemName: style.icon)
-                                .font(.system(size: 30, weight: .medium))
-                                .foregroundStyle(charcoal)
-                                .frame(width: 60, height: 60)
-                                .background(style.accent.opacity(colorScheme == .dark ? 0.35 : 0.25), in: RoundedRectangle(cornerRadius: 18))
-                                .accessibilityHidden(true)
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(result.itemName)
-                                    .font(.subheadline.weight(.medium))
-                                Text(result.disposalStream.rawValue)
-                                    .font(.title.bold())
-                                    .foregroundStyle(charcoal)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            Text(result.instruction)
-                                .fixedSize(horizontal: false, vertical: true)
-                            if let source = result.sourceURL, let url = URL(string: source) {
-                                Link("Council disposal guidance", destination: url)
-                            }
-                        }
-                        .padding(24)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(style.surface, in: RoundedRectangle(cornerRadius: 28))
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("A–Z disposal glossary")
+                            .font(.title2.bold())
+                        Text("Browse by name or search above. Tap an item for disposal advice.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
 
-                    if let error = viewModel.errorMessage {
-                        Label {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("What to do next").font(.headline)
-                                Text(error).fixedSize(horizontal: false, vertical: true)
+                    if let error = viewModel.catalogueError {
+                        Text(error)
+                        Button("Try again") { viewModel.loadCatalogue() }
+                    } else if viewModel.filteredItems.isEmpty {
+                        ContentUnavailableView("No items found", systemImage: "magnifyingglass",
+                                               description: Text("Try a shorter item name or check the council’s full A–Z guide below."))
+                    } else {
+                        LazyVStack(alignment: .leading, spacing: 16) {
+                            ForEach(viewModel.glossaryLetters, id: \.self) { letter in
+                                Section {
+                                    ForEach(viewModel.filteredItems.filter { String($0.name.prefix(1)).uppercased() == letter }) { item in
+                                        glossaryRow(item)
+                                    }
+                                } header: {
+                                    Text(letter)
+                                        .font(.title2.bold())
+                                        .foregroundStyle(green)
+                                        .accessibilityAddTraits(.isHeader)
+                                }
                             }
-                        } icon: {
-                            Image(systemName: "exclamationmark.circle")
-                                .foregroundStyle(.red)
                         }
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
-                        .accessibilityElement(children: .combine)
                     }
+
+                    Link(destination: URL(string: "https://www.cityofparramatta.nsw.gov.au/residents/bins-waste-and-recycling/a-z-guide-to-waste-and-recycling")!) {
+                        Label("Council’s full A–Z guide", systemImage: "arrow.up.right.square")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .tint(green)
+
                 }
                 .padding(20)
                 .frame(maxWidth: 600)
@@ -147,7 +116,8 @@ struct ScanItemView: View {
             .scrollDismissesKeyboard(.interactively)
             .background(background)
             .foregroundStyle(charcoal)
-            .navigationTitle("Check an Item")
+            .navigationTitle("Rubbish glossary")
+            .task { viewModel.loadCatalogue() }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(background, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -167,8 +137,38 @@ struct ScanItemView: View {
         }
     }
 
-    private func checkItem() {
-        isEnteringItem = false
-        viewModel.checkDisposalGuidance()
+    private func glossaryRow(_ item: WasteItem) -> some View {
+        let style = disposalStyle(for: item.disposalStream)
+        return DisclosureGroup {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(item.instruction)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let source = item.sourceURL, let url = URL(string: source) {
+                    Link("Council disposal guidance", destination: url)
+                        .font(.subheadline.weight(.medium))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 12)
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: style.icon)
+                    .foregroundStyle(charcoal)
+                    .frame(width: 44, height: 44)
+                    .background(style.accent.opacity(0.2), in: RoundedRectangle(cornerRadius: 12))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(item.name).font(.headline)
+                    Text(item.disposalStream.rawValue)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+            .foregroundStyle(charcoal)
+        }
+        .tint(green)
+        .padding(18)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
     }
 }
