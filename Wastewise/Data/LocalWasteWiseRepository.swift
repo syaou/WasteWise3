@@ -28,7 +28,29 @@ struct LocalWasteWiseRepository: WasteWiseRepository {
                 throw DisposalCatalogueStore.CatalogueError.invalidItem
             }
             return WasteItem(id: id, name: name, disposalStream: stream, instruction: instruction,
-                             sourceURL: record.value(forKey: "sourceURL") as? String)
+                             sourceURL: record.value(forKey: "sourceURL") as? String,
+                             searchTerms: DisposalCatalogueSeed.searchTermsByID[id] ?? [])
+        }
+    }
+
+    func allWasteItems() throws -> [WasteItem] {
+        let context = try catalogue().container.newBackgroundContext()
+        return try context.performAndWait {
+            let request = NSFetchRequest<NSManagedObject>(entityName: "WasteItemRecord")
+            request.relationshipKeyPathsForPrefetching = ["category"]
+            return try context.fetch(request).map { record in
+                guard let id = record.value(forKey: "identifier") as? String,
+                      let name = record.value(forKey: "name") as? String,
+                      let instruction = record.value(forKey: "instruction") as? String,
+                      let category = record.value(forKey: "category") as? NSManagedObject,
+                      let categoryName = category.value(forKey: "name") as? String,
+                      let stream = DisposalStream(rawValue: categoryName) else {
+                    throw DisposalCatalogueStore.CatalogueError.invalidItem
+                }
+                return WasteItem(id: id, name: name, disposalStream: stream, instruction: instruction,
+                                 sourceURL: record.value(forKey: "sourceURL") as? String,
+                                 searchTerms: DisposalCatalogueSeed.searchTermsByID[id] ?? [])
+            }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         }
     }
 

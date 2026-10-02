@@ -7,6 +7,23 @@ struct WasteItem: Identifiable, Equatable {
     let disposalStream: DisposalStream
     let instruction: String
     var sourceURL: String? = nil
+    var searchTerms: [String] = []
+
+    /// Match everyday names, partial words and punctuation-insensitive phrases.
+    func matchesSearch(_ query: String) -> Bool {
+        let tokens = Self.searchTokens(query)
+        guard !tokens.isEmpty else { return true }
+        return ([name] + searchTerms).contains { term in
+            let words = Self.searchTokens(term)
+            return tokens.allSatisfy { token in words.contains { $0.contains(token) } }
+        }
+    }
+
+    private static func searchTokens(_ value: String) -> [String] {
+        value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_AU"))
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+    }
 }
 
 /// Household bin categories and additional disposal services. These are not all kerbside bins.

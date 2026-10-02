@@ -18,15 +18,20 @@ final class DisposalCatalogueStore {
         var failure: Error?
         container.loadPersistentStores { _, error in failure = error }
         if let failure { throw failure }
-        try seedIfEmpty()
+        try seedMissingItems()
     }
 
-    private func seedIfEmpty() throws {
+    private func seedMissingItems() throws {
         let context = container.newBackgroundContext()
         try context.performAndWait {
-            guard try context.count(for: NSFetchRequest<NSManagedObject>(entityName: "WasteItemRecord")) == 0 else { return }
+            // Backfill new bundled items without replacing existing saved guidance.
+            let records = try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "WasteItemRecord"))
+            let existingIDs = Set(records.compactMap { $0.value(forKey: "identifier") as? String })
             var categories: [String: NSManagedObject] = [:]
-            for item in DisposalCatalogueSeed.items {
+            for category in try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "DisposalCategory")) {
+                if let name = category.value(forKey: "name") as? String { categories[name] = category }
+            }
+            for item in DisposalCatalogueSeed.items where !existingIDs.contains(item.id) {
                 let category: NSManagedObject
                 if let existing = categories[item.disposalStream.rawValue] { category = existing }
                 else {
@@ -41,7 +46,7 @@ final class DisposalCatalogueStore {
                 record.setValue(item.sourceURL, forKey: "sourceURL")
                 record.setValue(category, forKey: "category")
             }
-            try context.save()
+            if context.hasChanges { try context.save() }
         }
     }
 

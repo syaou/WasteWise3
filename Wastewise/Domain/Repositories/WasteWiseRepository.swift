@@ -5,6 +5,8 @@ import Foundation
 /// The current implementation combines a Core Data disposal catalogue and simulated bookings
 /// with live City of Parramatta collection zone information from ArcGIS.
 protocol WasteWiseRepository {
+    func allWasteItems() throws -> [WasteItem]
+
     /// Finds a catalogue item by name, returning nil when it is unknown.
     /// A specialist item may be returned here; the classification Use Case prevents household bin advice.
     func findWasteItem(named name: String) throws -> WasteItem?

@@ -11,6 +11,11 @@ final class MockWasteWiseRepository: WasteWiseRepository {
 
     enum Failure: Error { case unavailable }
 
+    func allWasteItems() throws -> [WasteItem] {
+        if shouldFail { throw Failure.unavailable }
+        return wasteItem.map { [$0] } ?? []
+    }
+
     func findWasteItem(named name: String) throws -> WasteItem? {
         requestedName = name
         if shouldFail { throw Failure.unavailable }
