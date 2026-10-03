@@ -30,6 +30,9 @@ The main parts are:
 
 The collection workflow coordinator connects address changes and collection results to reminders and widget snapshots. Views forward lifecycle events; the reminder Use Case validates weekly timing, and platform adapters handle notification delivery and App Group updates.
 
+- **Use Cases:** `ClassifyWasteItemUseCase`, `FindCollectionScheduleUseCase` and `SubmitCleanupBookingUseCase` validate requests and coordinate waste guidance, collection lookups and simulated bookings.
+- **Repositories and data:** The `WasteWiseRepository` protocol separates domain logic from data access. `LocalWasteWiseRepository` retrieves disposal guidance from Core Data, delegates collection lookups to the council’s live ArcGIS service and returns demonstration clean-up confirmations.
+
 ## Extensions
 
 - **Reminder widget (`ReminderExtension`):** Uses WidgetKit to display a countdown to the next stored collection date, helping residents check upcoming collections from their Home Screen.
