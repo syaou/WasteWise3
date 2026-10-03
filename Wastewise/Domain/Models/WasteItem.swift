@@ -27,7 +27,7 @@ struct WasteItem: Identifiable, Equatable {
 }
 
 /// Household bin categories and additional disposal services. These are not all kerbside bins.
-enum DisposalStream: String {
+enum DisposalStream: String, CaseIterable {
     case recycling = "Recycling"
     case generalWaste = "General waste"
     case greenWaste = "Food and garden organics (FOGO)"

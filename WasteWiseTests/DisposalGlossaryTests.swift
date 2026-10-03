@@ -11,9 +11,10 @@ final class DisposalGlossaryTests: XCTestCase {
         let store = try DisposalCatalogueStore(storeURL: directory.appendingPathComponent("Catalogue.sqlite"))
         let model = ScanItemViewModel(repository: LocalWasteWiseRepository(catalogue: store))
         model.loadCatalogue()
+        let catalogue = model.filteredItems
         XCTAssertNil(model.catalogueError)
-        XCTAssertGreaterThanOrEqual(model.catalogue.count, 50)
-        XCTAssertEqual(Set(model.catalogue.map(\.id)).count, model.catalogue.count)
+        XCTAssertGreaterThanOrEqual(catalogue.count, 50)
+        XCTAssertEqual(Set(catalogue.map(\.id)).count, catalogue.count)
         for (query, id) in [(" BATTERIES ", "battery"), ("diapers", "nappies"),
                             ("Styrofoam", "polystyrene-packaging"), ("BBQ", "barbecue"),
                             ("coffee grinds", "coffee-grinds-without-pods-or-other-packaging"),
@@ -28,8 +29,22 @@ final class DisposalGlossaryTests: XCTestCase {
         model.itemName = "no such item"
         XCTAssertTrue(model.filteredItems.isEmpty)
         model.itemName = " "
-        XCTAssertEqual(model.filteredItems.count, model.catalogue.count)
-        XCTAssertTrue(model.catalogue.allSatisfy { $0.sourceURL?.hasPrefix("https://www.cityofparramatta.nsw.gov.au/") == true })
+        XCTAssertEqual(model.filteredItems.count, catalogue.count)
+        XCTAssertTrue(catalogue.allSatisfy { $0.sourceURL?.hasPrefix("https://www.cityofparramatta.nsw.gov.au/") == true })
+    }
+
+    func testRepositoryQueriesItemsThroughTheirDisposalCategory() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = try DisposalCatalogueStore(storeURL: directory.appendingPathComponent("Catalogue.sqlite"))
+        let repository = LocalWasteWiseRepository(catalogue: store)
+        let allItems = try repository.allWasteItems()
+        for stream in DisposalStream.allCases {
+            let items = try repository.wasteItems(in: stream)
+            XCTAssertFalse(items.isEmpty, stream.rawValue)
+            XCTAssertEqual(Set(items.map(\.id)), Set(allItems.filter { $0.disposalStream == stream }.map(\.id)))
+        }
     }
 
     func testBackfillAddsItemsToExistingStoreWithoutReplacingGuidanceOrDuplicatingCategories() throws {

@@ -16,3 +16,11 @@ Search uses item names and explicit everyday aliases, ignoring case, accents, pu
 Aliases are bundled metadata keyed by stable item ID and attached by the repository. No Core Data schema migration is needed. Opening the store inserts missing catalogue records and reuses existing categories while preserving saved records. Updating guidance for an existing ID in a future release requires an explicit content-update policy; this backfill only adds missing items.
 
 Validation covers persisted item counts, unique IDs, source links, everyday search names, ambiguous pizza searches, empty searches and reopening a partial catalogue without duplicates or overwriting saved instructions. See `WasteWiseTests/DisposalGlossaryTests.swift`.
+
+## Glossary workflow
+
+The screen delegates to `ScanItemViewModel` → `FindDisposalGuidanceUseCase` → `WasteWiseRepository` → Core Data. The Use Case enforces matching against names or individual everyday aliases, returns alphabetically ordered advice, and maps catalogue failures to a recoverable domain error. Blank searches browse the selected route; no matches return an empty result rather than an error. Specialist items retain their specific instructions.
+
+The Disposal route picker requests items using the Core Data relationship predicate `category.name == %@`. A nil route browses all categories. Search then matches the resulting items and their bundled aliases, so alias behaviour remains consistent without a schema migration.
+
+`FindDisposalGuidanceUseCaseTests` uses a mock repository for browsing, alias matching, route selection, false-positive prevention, specialist advice, failure and retry. `DisposalGlossaryTests` additionally checks real persisted category queries as integration tests.

@@ -2,6 +2,8 @@ import Foundation
 @testable import Wastewise
 
 final class MockWasteWiseRepository: WasteWiseRepository {
+    var catalogueItems: [WasteItem]?
+    private(set) var requestedStream: DisposalStream?
     var wasteItem: WasteItem?
     var schedule: CollectionSchedule?
     var shouldFail = false
@@ -11,9 +13,10 @@ final class MockWasteWiseRepository: WasteWiseRepository {
 
     enum Failure: Error { case unavailable }
 
-    func allWasteItems() throws -> [WasteItem] {
+    func wasteItems(in stream: DisposalStream?) throws -> [WasteItem] {
+        requestedStream = stream
         if shouldFail { throw Failure.unavailable }
-        return wasteItem.map { [$0] } ?? []
+        return (catalogueItems ?? wasteItem.map { [$0] } ?? []).filter { stream == nil || $0.disposalStream == stream }
     }
 
     func findWasteItem(named name: String) throws -> WasteItem? {

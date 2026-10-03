@@ -79,12 +79,14 @@ struct ScanItemView: View {
                             .foregroundStyle(.secondary)
                     }
 
+                    disposalRouteMenu
+
                     if let error = viewModel.catalogueError {
                         Text(error)
                         Button("Try again") { viewModel.loadCatalogue() }
                     } else if viewModel.filteredItems.isEmpty {
                         ContentUnavailableView("No items found", systemImage: "magnifyingglass",
-                                               description: Text("Try a shorter item name or check the council’s full A–Z guide below."))
+                                               description: Text("Try a shorter item name, choose All disposal routes, or check the council’s A–Z guide below."))
                     } else {
                         LazyVStack(alignment: .leading, spacing: 16) {
                             ForEach(viewModel.glossaryLetters, id: \.self) { letter in
@@ -122,6 +124,54 @@ struct ScanItemView: View {
             .toolbarBackground(background, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
         }
+    }
+
+    private var disposalRouteMenu: some View {
+        Menu {
+            Picker("Disposal route", selection: $viewModel.selectedStream) {
+                Label("All disposal routes", systemImage: "line.3.horizontal.decrease")
+                    .tag(nil as DisposalStream?)
+                ForEach(DisposalStream.allCases, id: \.self) { stream in
+                    Label(stream.rawValue, systemImage: disposalStyle(for: stream).icon)
+                        .tag(Optional(stream))
+                }
+            }
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(green)
+                    .frame(width: 44, height: 44)
+                    .background(greenSurface, in: RoundedRectangle(cornerRadius: 12))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Disposal route")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                    Text(viewModel.selectedStream?.rawValue ?? "All disposal routes")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(charcoal)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(green)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
+            .overlay {
+                RoundedRectangle(cornerRadius: 20)
+                    .strokeBorder(green.opacity(0.18), lineWidth: 1)
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 20))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Disposal route")
+        .accessibilityValue(viewModel.selectedStream?.rawValue ?? "All disposal routes")
+        .accessibilityHint("Choose which disposal route to browse")
     }
 
     private func disposalStyle(for stream: DisposalStream) -> (icon: String, accent: Color, surface: Color) {

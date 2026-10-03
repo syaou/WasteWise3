@@ -5,7 +5,8 @@ import Foundation
 /// The current implementation combines a Core Data disposal catalogue and simulated bookings
 /// with live City of Parramatta collection zone information from ArcGIS.
 protocol WasteWiseRepository {
-    func allWasteItems() throws -> [WasteItem]
+    /// Returns catalogue items for a disposal route, or every route when nil.
+    func wasteItems(in stream: DisposalStream?) throws -> [WasteItem]
 
     /// Finds a catalogue item by name, returning nil when it is unknown.
     /// A specialist item may be returned here; the classification Use Case prevents household bin advice.
@@ -17,4 +18,8 @@ protocol WasteWiseRepository {
     /// Processes a request already validated by the clean up Use Case and returns a demo receipt.
     /// This operation does not submit a booking to City of Parramatta or arrange a collection.
     func submitCleanupBooking(_ request: CleanupBookingRequest) throws -> CleanupBookingConfirmation
+}
+
+extension WasteWiseRepository {
+    func allWasteItems() throws -> [WasteItem] { try wasteItems(in: nil) }
 }

@@ -1,27 +1,17 @@
 import Foundation
 import Combine
 
-/// Presents the offline disposal glossary with everyday-name search.
-/// The existing classification action retains its Use Case validation.
+/// Presents disposal advice returned by the glossary Use Case.
 @MainActor
 final class ScanItemViewModel: ObservableObject {
-    @Published var itemName = ""
-    @Published private(set) var result: DisposalGuidance?
-    @Published private(set) var errorMessage: String?
-    @Published private(set) var catalogue: [WasteItem] = []
+    @Published var itemName = "" { didSet { loadCatalogue() } }
+    @Published var selectedStream: DisposalStream? { didSet { loadCatalogue() } }
+    @Published private(set) var filteredItems: [WasteItem] = []
     @Published private(set) var catalogueError: String?
-    private let repository: any WasteWiseRepository
-    private let useCase: ClassifyWasteItemUseCase
+    private let useCase: FindDisposalGuidanceUseCase
 
     init(repository: (any WasteWiseRepository)? = nil) {
-        let repository = repository ?? LocalWasteWiseRepository()
-        self.repository = repository
-        useCase = ClassifyWasteItemUseCase(repository: repository)
-    }
-
-    var filteredItems: [WasteItem] {
-        let query = itemName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return catalogue.filter { $0.matchesSearch(query) }
+        useCase = FindDisposalGuidanceUseCase(repository: repository ?? LocalWasteWiseRepository())
     }
 
     var glossaryLetters: [String] {
@@ -30,14 +20,10 @@ final class ScanItemViewModel: ObservableObject {
 
     func loadCatalogue() {
         catalogueError = nil
-        do { catalogue = try repository.allWasteItems() }
-        catch { catalogueError = "The glossary couldn’t be loaded. Please try again." }
-    }
-
-    func checkDisposalGuidance() {
-        result = nil
-        errorMessage = nil
-        do { result = try useCase.execute(itemName: itemName) }
-        catch { errorMessage = error.localizedDescription }
+        do { filteredItems = try useCase.execute(query: itemName, stream: selectedStream) }
+        catch {
+            filteredItems = []
+            catalogueError = error.localizedDescription
+        }
     }
 }
