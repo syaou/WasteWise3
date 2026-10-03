@@ -25,8 +25,10 @@ The main parts are:
 
 - **Views:** SwiftUI screens for Home, Collections, Check Item, Clean Up, address editing and reminder settings.
 - **ViewModels:** Manage screen state, searches, results, errors and user actions. A shared address store keeps the resident’s address consistent across screens.
-- **Use Cases:** `FindDisposalGuidanceUseCase`, `ClassifyWasteItemUseCase`, `FindCollectionScheduleUseCase` and `SubmitCleanupBookingUseCase` validate requests and coordinate waste guidance, collection lookups and simulated bookings.
+- **Use Cases:** `PlanCollectionReminderUseCase`, `FindDisposalGuidanceUseCase`, `ClassifyWasteItemUseCase`, `FindCollectionScheduleUseCase` and `SubmitCleanupBookingUseCase` validate requests and coordinate waste guidance, collection lookups and simulated bookings.
 - **Repositories and data:** The `WasteWiseRepository` protocol separates domain logic from data access. `LocalWasteWiseRepository` retrieves disposal guidance from Core Data, delegates collection lookups to the council’s live ArcGIS service and returns demonstration clean-up confirmations.
+
+The collection workflow coordinator connects address changes and collection results to reminders and widget snapshots. Views forward lifecycle events; the reminder Use Case validates weekly timing, and platform adapters handle notification delivery and App Group updates.
 
 ## Extensions
 

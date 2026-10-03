@@ -41,3 +41,11 @@ Notification permission, Focus and notification-summary settings can affect pres
 Run the Wastewise scheme's tests. `CollectionReminderTests` covers opt-in-only permission requests, payload/category and weekly timezone components, persistence, time/weekday/address replacement, stale address rejection, pending and delivered cancellation, permission denial/revocation, delayed permission/add races, sample cancellation, foreground sample preservation, invalid metadata and scheduling failures. Existing collection and widget tests are retained.
 
 The target follows Apple's [notification content extension contract](https://developer.apple.com/documentation/usernotificationsui/unnotificationcontentextension). `NotificationViewController.didReceive` logs `Custom WasteWise notification content received and displayed` under the content extension bundle identifier, useful for confirming that the system instantiated the custom view.
+
+## Workflow architecture
+
+`ContentView` forwards address, collection-result and foreground events to `CollectionWorkflowCoordinator`. The coordinator starts/cancels collection lookup, updates reminders and publishes widget snapshots through an injectable `CollectionWidgetPublishing` adapter. The system adapter saves App Group data and reloads the widget together. A changed or removed household clears its snapshot; results for another household are ignored. Launch with a saved address preserves the cached countdown while lookup refreshes.
+
+`PlanCollectionReminderUseCase` validates the allowed reminder day/time and produces weekly Sydney calendar components from known collection information. It reports typed domain errors instead of guessing a collection day. `CollectionReminderController` retains notification authorization, persistence and its serialized revision checks, preventing stale asynchronous operations from restoring cancelled reminders. Invalid time edits show a recovery message without replacing saved preferences.
+
+`CollectionWorkflowTests` uses mock collection/notification dependencies and a recording widget publisher to verify household changes, removal, stale results and permission-free lifecycle events. `PlanCollectionReminderUseCaseTests` covers week wraparound, allowed boundaries and invalid or missing reminder information.
