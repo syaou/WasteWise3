@@ -33,11 +33,14 @@ struct LocalWasteWiseRepository: WasteWiseRepository {
         }
     }
 
-    func allWasteItems() throws -> [WasteItem] {
+    func wasteItems(in stream: DisposalStream?) throws -> [WasteItem] {
         let context = try catalogue().container.newBackgroundContext()
         return try context.performAndWait {
             let request = NSFetchRequest<NSManagedObject>(entityName: "WasteItemRecord")
             request.relationshipKeyPathsForPrefetching = ["category"]
+            if let stream {
+                request.predicate = NSPredicate(format: "category.name == %@", stream.rawValue)
+            }
             return try context.fetch(request).map { record in
                 guard let id = record.value(forKey: "identifier") as? String,
                       let name = record.value(forKey: "name") as? String,

@@ -25,6 +25,11 @@ The main parts are:
 
 - **Views:** SwiftUI screens for Home, Collections, Check Item, Clean Up, address editing and reminder settings.
 - **ViewModels:** Manage screen state, searches, results, errors and user actions. A shared address store keeps the resident’s address consistent across screens.
+- **Use Cases:** `PlanCollectionReminderUseCase`, `FindDisposalGuidanceUseCase`, `ClassifyWasteItemUseCase`, `FindCollectionScheduleUseCase` and `SubmitCleanupBookingUseCase` validate requests and coordinate waste guidance, collection lookups and simulated bookings.
+- **Repositories and data:** The `WasteWiseRepository` protocol separates domain logic from data access. `LocalWasteWiseRepository` retrieves disposal guidance from Core Data, delegates collection lookups to the council’s live ArcGIS service and returns demonstration clean-up confirmations.
+
+The collection workflow coordinator connects address changes and collection results to reminders and widget snapshots. Views forward lifecycle events; the reminder Use Case validates weekly timing, and platform adapters handle notification delivery and App Group updates.
+
 - **Use Cases:** `ClassifyWasteItemUseCase`, `FindCollectionScheduleUseCase` and `SubmitCleanupBookingUseCase` validate requests and coordinate waste guidance, collection lookups and simulated bookings.
 - **Repositories and data:** The `WasteWiseRepository` protocol separates domain logic from data access. `LocalWasteWiseRepository` retrieves disposal guidance from Core Data, delegates collection lookups to the council’s live ArcGIS service and returns demonstration clean-up confirmations.
 
@@ -41,6 +46,8 @@ The database contains two related entities:
 
 - `DisposalCategory`: The disposal route or category.
 - `WasteItemRecord`: An item’s identifier, name, disposal instructions, council source URL and category relationship.
+
+The glossary’s disposal-route filter queries the category relationship through the repository; its Use Case applies everyday-name matching and orders the results.
 
 The database is populated from a bundled catalogue. New catalogue entries are added without duplicating existing records. It does not use CloudKit or provide cloud synchronisation.
 

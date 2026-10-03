@@ -39,6 +39,7 @@ final class CollectionReminderController: ObservableObject {
     @Published private(set) var information: CollectionReminderContent?
     @Published private(set) var status = "Reminders are off."
     @Published private(set) var permissionDenied = false
+    private let planning = PlanCollectionReminderUseCase()
     private let client: any ReminderNotificationClient
     private let defaults: UserDefaults
     private let storageKey = "collectionReminders.v1"
@@ -97,7 +98,8 @@ final class CollectionReminderController: ObservableObject {
     }
 
     func saveReminder(daysBefore: Int, hour: Int, minute: Int) {
-        guard (0...6).contains(daysBefore), (0...23).contains(hour), (0...59).contains(minute) else { return }
+        do { try planning.validateTime(daysBefore: daysBefore, hour: hour, minute: minute) }
+        catch { status = error.localizedDescription; return }
         state.daysBefore = daysBefore
         state.hour = hour
         state.minute = minute
@@ -106,7 +108,8 @@ final class CollectionReminderController: ObservableObject {
     }
 
     func setTime(hour: Int, minute: Int) {
-        guard (0...23).contains(hour), (0...59).contains(minute) else { return }
+        do { try planning.validateTime(daysBefore: state.daysBefore ?? 1, hour: hour, minute: minute) }
+        catch { status = error.localizedDescription; return }
         state.hour = hour; state.minute = minute
         changed()
     }
@@ -188,7 +191,9 @@ final class CollectionReminderController: ObservableObject {
                 } else if let information = desired.information, !desired.addressKey.isEmpty {
                     do {
                         let content = Self.notificationContent(information, daysBefore: desired.daysBefore ?? 1)
-                        let trigger = UNCalendarNotificationTrigger(dateMatching: information.weeklyComponents(hour: desired.hour, minute: desired.minute, daysBefore: desired.daysBefore ?? 1), repeats: true)
+                        let components = try planning.execute(information: information, daysBefore: desired.daysBefore ?? 1,
+                                                              hour: desired.hour, minute: desired.minute)
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
                         try await client.add(UNNotificationRequest(identifier: CollectionReminderContent.weeklyIdentifier, content: content, trigger: trigger))
                         if version != revision { client.cancelReminders(); continue }
                         status = "Weekly reminder saved for your chosen day and Sydney time."
@@ -223,7 +228,7 @@ final class CollectionReminderController: ObservableObject {
         let content = UNMutableNotificationContent()
         content.title = "Time to put the bins out"
         let timing = daysBefore == 0 ? "today" : daysBefore == 1 ? "tomorrow" : "in \(daysBefore) days"
-        content.body = "Your collection day is \(timing) (\(information.weekdayName))."
+        content.body = "Your usual collection day is \(timing) (\(information.weekdayName))."
         content.categoryIdentifier = CollectionReminderContent.category
         content.threadIdentifier = "wastewise.collection"
         content.sound = .default
